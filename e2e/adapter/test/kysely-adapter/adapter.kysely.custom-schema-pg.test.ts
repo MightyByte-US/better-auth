@@ -11,6 +11,7 @@ import {
 	numberIdTestSuite,
 	transactionsTestSuite,
 	uuidTestSuite,
+	uuidv7TestSuite,
 } from "../adapter-factory";
 
 /**
@@ -99,6 +100,7 @@ const { execute } = await testAdapter({
 		authFlowTestSuite(),
 		numberIdTestSuite(),
 		uuidTestSuite(),
+		uuidv7TestSuite(),
 		joinsTestSuite(),
 	],
 	async onFinish() {

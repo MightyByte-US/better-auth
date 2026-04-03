@@ -13,6 +13,7 @@ import {
 	numberIdTestSuite,
 	transactionsTestSuite,
 	uuidTestSuite,
+	uuidv7TestSuite,
 } from "../adapter-factory";
 
 const dbPath = path.join(__dirname, "test.db");
@@ -50,6 +51,7 @@ const { execute } = await testAdapter({
 		numberIdTestSuite(),
 		joinsTestSuite(),
 		uuidTestSuite(),
+		uuidv7TestSuite(),
 		caseInsensitiveTestSuite(),
 	],
 	async onFinish() {

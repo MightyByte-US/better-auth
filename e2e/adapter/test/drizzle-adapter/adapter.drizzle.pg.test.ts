@@ -11,6 +11,7 @@ import {
 	numberIdTestSuite,
 	transactionsTestSuite,
 	uuidTestSuite,
+	uuidv7TestSuite,
 } from "../adapter-factory";
 import { generateDrizzleSchema, resetGenerationCount } from "./generate-schema";
 
@@ -66,6 +67,7 @@ const { execute } = await testAdapter({
 		numberIdTestSuite(),
 		joinsTestSuite(),
 		uuidTestSuite(),
+		uuidv7TestSuite(),
 		caseInsensitiveTestSuite(),
 	],
 	async onFinish() {

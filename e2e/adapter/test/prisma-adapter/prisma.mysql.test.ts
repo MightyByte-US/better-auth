@@ -9,6 +9,7 @@ import {
 	numberIdTestSuite,
 	transactionsTestSuite,
 	uuidTestSuite,
+	uuidv7TestSuite,
 } from "../adapter-factory";
 import { generateAuthConfigFile } from "./generate-auth-config";
 import { generatePrismaSchema } from "./generate-prisma-schema";
@@ -43,6 +44,7 @@ const { execute } = await testAdapter({
 		numberIdTestSuite(),
 		joinsTestSuite(),
 		uuidTestSuite(),
+		uuidv7TestSuite(),
 		caseInsensitiveTestSuite({
 			disableTests: {
 				"findOne - eq with mode sensitive (default) should not match different case": true,

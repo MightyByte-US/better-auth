@@ -330,8 +330,12 @@ export type BetterAuthAdvancedOptions = {
 				 * the id. If postgres, we use the `gen_random_uuid()
 				 * ` function. If mysql or mssql, we use the `uuid()`
 				 * function.
+				 *
+				 * If set to "uuidv7", we generate a time-ordered UUID
+				 * (v7) for the id. Requires PostgreSQL 18+ for
+				 * database generation.
 				 */
-				generateId?: GenerateIdFn | false | "serial" | "uuid";
+				generateId?: GenerateIdFn | false | "serial" | "uuid" | "uuidv7";
 		  }
 		| undefined;
 	/**
