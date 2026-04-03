@@ -13,6 +13,7 @@ import {
 	numberIdTestSuite,
 	transactionsTestSuite,
 	uuidTestSuite,
+	uuidv7TestSuite,
 } from "../adapter-factory";
 import {
 	clearSchemaCache,
@@ -70,6 +71,7 @@ const { execute } = await testAdapter({
 		numberIdTestSuite(),
 		joinsTestSuite(),
 		uuidTestSuite(),
+		uuidv7TestSuite(),
 		caseInsensitiveTestSuite(),
 	],
 	async onFinish() {

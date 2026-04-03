@@ -1,6 +1,6 @@
 import { logger } from "../../env";
 import type { BetterAuthOptions } from "../../types";
-import { generateId as defaultGenerateId } from "../../utils/id";
+import { generateId as defaultGenerateId, randomUUIDv7 } from "../../utils/id";
 import type { BetterAuthDBSchema, DBFieldAttribute } from "../type";
 import { initGetDefaultModelName } from "./get-default-model-name";
 
@@ -32,7 +32,9 @@ export const initGetIdField = ({
 		forceAllowId?: boolean;
 	}) => {
 		const useNumberId = options.advanced?.database?.generateId === "serial";
-		const useUUIDs = options.advanced?.database?.generateId === "uuid";
+		const useUUIDs =
+			options.advanced?.database?.generateId === "uuid" ||
+			options.advanced?.database?.generateId === "uuidv7";
 
 		const shouldGenerateId: boolean = (() => {
 			if (disableIdGeneration) {
@@ -73,6 +75,9 @@ export const initGetIdField = ({
 							if (generateId === "uuid") {
 								return crypto.randomUUID();
 							}
+							if (generateId === "uuidv7") {
+								return randomUUIDv7();
+							}
 
 							// database adapter-level custom id generator
 							if (customIdGenerator) {
@@ -110,10 +115,13 @@ export const initGetIdField = ({
 						if (disableIdGeneration) return undefined;
 						// if DB will handle UUID generation, then we should return undefined.
 						if (supportsUUIDs) return undefined;
+						const isUUIDv7 =
+							options.advanced?.database?.generateId === "uuidv7";
 						// if forceAllowId is true, it means we should be using the ID provided during the adapter call.
 						if (forceAllowId && typeof value === "string") {
-							const uuidRegex =
-								/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+							const uuidRegex = isUUIDv7
+								? /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+								: /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 							if (uuidRegex.test(value)) {
 								return value;
 							} else {
@@ -124,14 +132,14 @@ export const initGetIdField = ({
 									.join("\n")
 									.replace("Error:", "");
 								logger.warn(
-									"[Adapter Factory] - Invalid UUID value for field `id` provided when `forceAllowId` is true. Generating a new UUID.",
+									`[Adapter Factory] - Invalid UUID${isUUIDv7 ? "v7" : ""} value for field \`id\` provided when \`forceAllowId\` is true. Generating a new UUID${isUUIDv7 ? "v7" : ""}.`,
 									stack,
 								);
 							}
 						}
 						// if the value is not a string, and the database doesn't support generating it's own UUIDs, then we should be generating the UUID.
 						if (typeof value !== "string" && !supportsUUIDs) {
-							return crypto.randomUUID();
+							return isUUIDv7 ? randomUUIDv7() : crypto.randomUUID();
 						}
 						return undefined;
 					}

@@ -9,6 +9,7 @@ import {
 	numberIdTestSuite,
 	transactionsTestSuite,
 	uuidTestSuite,
+	uuidv7TestSuite,
 } from "../adapter-factory";
 
 let db: Record<string, any[]> = {};
@@ -33,6 +34,7 @@ const { execute } = await testAdapter({
 		numberIdTestSuite(),
 		joinsTestSuite(),
 		uuidTestSuite(),
+		uuidv7TestSuite(),
 		caseInsensitiveTestSuite(),
 	],
 	async onFinish() {},

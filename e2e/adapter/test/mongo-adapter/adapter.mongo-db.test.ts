@@ -87,6 +87,7 @@ const { execute } = await testAdapter({
 		caseInsensitiveTestSuite(),
 		updateObjectIdTestSuite(),
 		uuidTestSuite(),
+		// uuidv7TestSuite(), // no support
 		// numberIdTestSuite(), // no support
 	],
 	customIdGenerator: () => new ObjectId().toHexString(),

@@ -12,6 +12,7 @@ import {
 	numberIdTestSuite,
 	transactionsTestSuite,
 	uuidTestSuite,
+	uuidv7TestSuite,
 } from "../adapter-factory";
 import {
 	DEFAULT_SCHEMA_REFERENCE,
@@ -56,6 +57,7 @@ const { execute } = await testAdapter({
 		numberIdTestSuite(),
 		joinsTestSuite(),
 		uuidTestSuite(),
+		uuidv7TestSuite(),
 		caseInsensitiveTestSuite(),
 		schemaRefTestSuite(),
 		schemaRefJoinTestSuite(),

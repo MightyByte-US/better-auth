@@ -282,7 +282,9 @@ export async function getMigrations(config: BetterAuthOptions) {
 		| CreateIndexBuilder
 	)[] = [];
 
-	const useUUIDs = config.advanced?.database?.generateId === "uuid";
+	const useUUIDs =
+		config.advanced?.database?.generateId === "uuid" ||
+		config.advanced?.database?.generateId === "uuidv7";
 	const useNumberId = config.advanced?.database?.generateId === "serial";
 
 	function getType(field: DBFieldAttribute, fieldName: string) {
@@ -491,9 +493,13 @@ export async function getMigrations(config: BetterAuthOptions) {
 					}
 					if (useUUIDs) {
 						if (dbType === "postgres") {
+							const isUUIDv7 =
+								config.advanced?.database?.generateId === "uuidv7";
 							return col
 								.primaryKey()
-								.defaultTo(sql`pg_catalog.gen_random_uuid()`)
+								.defaultTo(
+									isUUIDv7 ? sql`uuidv7()` : sql`pg_catalog.gen_random_uuid()`,
+								)
 								.notNull();
 						}
 						return col.primaryKey().notNull();

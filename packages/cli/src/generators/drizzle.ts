@@ -65,7 +65,9 @@ export const generateDrizzleSchema: SchemaGenerator = async ({
 			name = convertToSnakeCase(name, adapter.options?.camelCase);
 			if (field.references?.field === "id") {
 				const useNumberId = options.advanced?.database?.generateId === "serial";
-				const useUUIDs = options.advanced?.database?.generateId === "uuid";
+				const useUUIDs =
+					options.advanced?.database?.generateId === "uuid" ||
+					options.advanced?.database?.generateId === "uuidv7";
 				if (useNumberId) {
 					if (databaseType === "pg") {
 						return `integer('${name}')`;
@@ -168,10 +170,13 @@ export const generateDrizzleSchema: SchemaGenerator = async ({
 		let id: string = "";
 
 		const useNumberId = options.advanced?.database?.generateId === "serial";
-		const useUUIDs = options.advanced?.database?.generateId === "uuid";
+		const useUUIDs =
+			options.advanced?.database?.generateId === "uuid" ||
+			options.advanced?.database?.generateId === "uuidv7";
 
 		if (useUUIDs && databaseType === "pg") {
-			id = `uuid("id").default(sql\`pg_catalog.gen_random_uuid()\`).primaryKey()`;
+			const isUUIDv7 = options.advanced?.database?.generateId === "uuidv7";
+			id = `uuid("id").default(sql\`${isUUIDv7 ? "uuidv7()" : "pg_catalog.gen_random_uuid()"}\`).primaryKey()`;
 		} else if (useNumberId) {
 			if (databaseType === "pg") {
 				id = `integer("id").generatedByDefaultAsIdentity().primaryKey()`;
@@ -549,7 +554,9 @@ function generateImport({
 
 	const useNumberId = options.advanced?.database?.generateId === "serial";
 
-	const useUUIDs = options.advanced?.database?.generateId === "uuid";
+	const useUUIDs =
+		options.advanced?.database?.generateId === "uuid" ||
+		options.advanced?.database?.generateId === "uuidv7";
 
 	coreImports.push(`${databaseType}Table`);
 	coreImports.push(
