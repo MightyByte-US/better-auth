@@ -50,7 +50,7 @@ describe("uuid support", () => {
 
 	function createAdapter(
 		db: any,
-		generateId: "uuid" | (() => string) | undefined,
+		generateId: "uuid" | "uuidv7" | (() => string) | undefined,
 	) {
 		const adapterFactory = mongodbAdapter(db, { transaction: false });
 		return adapterFactory({
@@ -141,6 +141,73 @@ describe("uuid support", () => {
 		});
 
 		const adapter = createAdapter(db, "uuid");
+		const result = await adapter.findOne({
+			model: "user",
+			where: [{ field: "id", value: uuid }],
+		});
+
+		expect(result).not.toBeNull();
+		expect((result as Record<string, unknown>).id).toBe(uuid);
+	});
+
+	it("should store _id as BSON UUID when generateId is 'uuidv7'", async () => {
+		const { db, insertedDocs } = createMockDb();
+		const adapter = createAdapter(db, "uuidv7");
+
+		await adapter.create({
+			model: "user",
+			data: {
+				name: "Test",
+				email: "test@test.com",
+				emailVerified: true,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			},
+		});
+
+		expect(insertedDocs.length).toBe(1);
+		expect(insertedDocs[0]._id).toBeInstanceOf(UUID);
+		expect(insertedDocs[0]._id.toString()).toMatch(uuidRegex);
+	});
+
+	it("should store FK fields as BSON UUID when generateId is 'uuidv7'", async () => {
+		const { db, insertedDocs } = createMockDb();
+		const adapter = createAdapter(db, "uuidv7");
+
+		await adapter.create({
+			model: "session",
+			data: {
+				userId: uuid,
+				token: "test-token",
+				expiresAt: new Date(),
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			},
+		});
+
+		expect(insertedDocs.length).toBe(1);
+		expect(insertedDocs[0]._id).toBeInstanceOf(UUID);
+		expect(insertedDocs[0].userId).toBeInstanceOf(UUID);
+		expect(insertedDocs[0].userId.toString()).toBe(uuid);
+	});
+
+	it("should convert BSON UUID to string in output with uuidv7", async () => {
+		const bsonUuid = new UUID(uuid);
+		const { db } = createMockDb();
+
+		(db.collection as any).mockReturnValue({
+			aggregate: vi.fn(() => ({
+				toArray: vi.fn(async () => [
+					{
+						_id: bsonUuid,
+						name: "Test",
+						email: "test@test.com",
+					},
+				]),
+			})),
+		});
+
+		const adapter = createAdapter(db, "uuidv7");
 		const result = await adapter.findOne({
 			model: "user",
 			where: [{ field: "id", value: uuid }],

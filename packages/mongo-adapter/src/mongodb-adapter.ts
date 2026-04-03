@@ -87,7 +87,9 @@ export const mongodbAdapter = (
 			options,
 		}) => {
 			const customIdGen = getCustomIdGenerator(options);
-			const useUUIDs = options.advanced?.database?.generateId === "uuid";
+			const useUUIDs =
+				options.advanced?.database?.generateId === "uuid" ||
+				options.advanced?.database?.generateId === "uuidv7";
 
 			function coerceToIdType(value: string): ObjectId | UUID {
 				if (useUUIDs) return new UUID(value);
@@ -698,7 +700,10 @@ export const mongodbAdapter = (
 						return data;
 					}
 					const IdClass =
-						options.advanced?.database?.generateId === "uuid" ? UUID : ObjectId;
+						options.advanced?.database?.generateId === "uuid" ||
+						options.advanced?.database?.generateId === "uuidv7"
+							? UUID
+							: ObjectId;
 					if (data instanceof IdClass) {
 						return data;
 					}

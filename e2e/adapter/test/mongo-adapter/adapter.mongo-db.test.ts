@@ -10,6 +10,7 @@ import {
 	normalTestSuite,
 	transactionsTestSuite,
 	uuidTestSuite,
+	uuidv7TestSuite,
 } from "../adapter-factory";
 
 const dbClient = async (connectionString: string, dbName: string) => {
@@ -87,7 +88,7 @@ const { execute } = await testAdapter({
 		caseInsensitiveTestSuite(),
 		updateObjectIdTestSuite(),
 		uuidTestSuite(),
-		// uuidv7TestSuite(), // no support
+		uuidv7TestSuite(),
 		// numberIdTestSuite(), // no support
 	],
 	customIdGenerator: () => new ObjectId().toHexString(),
