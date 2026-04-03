@@ -8,7 +8,7 @@
     "url": "git+https://github.com/better-auth/better-auth.git"
   },
   "scripts": {
-    "prepare": "lefthook install --reset-hooks-path",
+    "pack:all": "pnpm build && rm -rf tarballs && mkdir tarballs && pnpm -r --filter=./packages/* exec pnpm pack --pack-destination ../../tarballs",
     "build": "turbo build --filter=./packages/*",
     "dev": "turbo dev --filter=./packages/* --filter=!./packages/cli",
     "clean": "turbo clean --filter=./packages/* && rm -rf node_modules",
